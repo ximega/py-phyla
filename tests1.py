@@ -1,12 +1,15 @@
 from typing import Any
 
 
-class Unit:
-    def __init__(self, name: str, description: str) -> None:
-        self.name = name
-        self.description = description
+class Foo:
+    def __init__(self, value: int) -> None:
+        super().__setattr__('value', value)
         
-    def __
+    def __setattr__(self, name: str, value: Any) -> None:
+        raise PermissionError("You can't change any value of this object")
     
-kg = Unit('kg', 'kilogram')
-A = Unit('A', 'Amper')
+foo = Foo(10)
+
+print(foo.value)
+
+foo.value = 10

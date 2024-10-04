@@ -1,5 +1,12 @@
-from .units.std import __Unit
+from .units.classes import _Unit
+
+
+
+__all__ = [
+    'Collection'
+]
+
 
 class Collection:
-    def __init__(self, prompted: list | None = None) -> None:
+    def __init__(self, prompted: list[_Unit] | None = None) -> None:
         self.prompted = prompted
