@@ -1,4 +1,4 @@
-from .classes import _Unit, _Composite, __Constant, _Dimensional
+from .classes import _Unit, _Composite, _Dimensional
 from typing import Self
 
 

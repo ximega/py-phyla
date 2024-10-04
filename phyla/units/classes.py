@@ -69,8 +69,6 @@ class _Dimensional:
     def __new__(cls, dname: str, name: str, measurement: str, description: str) -> Self:
         if dname not in cls.__ALLOWED_NAMES:
             raise PermissionError("You can't create a unit that is outside of allowed names")
-        elif name in [instance.name for instance in cls.__instances]:
-            raise PermissionError(f"Can't create a second instance of {name}")
         else:
             instance = super().__new__(cls)
             
@@ -96,34 +94,3 @@ class _Dimensional:
         return _Composite(f"{other.name}*{self.name}", Unknown, Unknown)
 
 _Measurable = Union[_Unit, _Composite, _Dimensional]
-
-class __Constant:
-    __instances: list[Self] = []
-    __slots__ = ['__name', '__description', '__value', '__measured_in']
-    
-    def __new__(cls, name: str, description: str, value: int | float, measured_in: _Measurable) -> Self:
-        instance = super().__new__(cls)
-        cls.__instances.append(instance)
-        return instance
-    
-    def __init__(self, name: str, description: str, value: int | float, measured_in: _Measurable) -> None:
-        self.__name = name
-        self.__description = description
-        self.__value = value
-        self.__measured_in = measured_in
-        
-    def __str__(self) -> str:
-        return f"{self.__value} {self.__measured_in}"
-    
-    @property
-    def name(self) -> str:
-        return self.__name
-    @property
-    def description(self) -> str:
-        return self.__description
-    @property
-    def value(self) -> int | float:
-        return self.__value
-    @property
-    def measured_in(self) -> _Measurable:
-        return self.__measured_in
