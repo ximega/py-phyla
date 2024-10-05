@@ -4,26 +4,52 @@ Unknown = 'Unknown'
 
 class _Composite:
     __instances: list[Self] = []
-    __slots__ = ['name', 'measurement', 'description', 'parts']
+    __slots__ = ['name', 'measurement', 'description', 'parts', 'corr_value']
+    __CORRESPONDING: dict[str, str] = {} 
     
-    def __new__(cls, name: str, measurement: str, description: str) -> Self:
+    def __new__(cls, *args, **kwargs) -> Self:
         instance = super().__new__(cls)
         cls.__instances.append(instance)
         return instance
     
-    def __init__(self, name: str, measurement: str, description: str) -> None:
+    def __init__(self, name: str, measurement: str, description: str, *, corr_value: bool = False) -> None:
         self.name = name
         self.measurement = measurement
         self.description = description
+        self.corr_value = corr_value
         
     def __str__(self) -> str:
+        if self.corr_value:
+            print('Called')
+            try:
+                return self.__CORRESPONDING[self.name]
+            except KeyError:
+                raise KeyError(f"Corresponding value not found for {self.name}")
         return self.name
         
+    def __add__(self, other) -> "_Composite":
+        return _Composite(f"{self.name}+{other.name}", Unknown, Unknown)
+    
+    def __sub__(self, other) -> "_Composite":
+        return _Composite(f"{self.name}-{other.name}", Unknown, Unknown)
+    
     def __mul__(self, other) -> "_Composite":
-        return self.__new__(self.__class__, f"{self.name}*{other.name}", Unknown, Unknown)
+        return _Composite(f"{self.name}*{other.name}", Unknown, Unknown)
+    
+    def __truediv__(self, other) -> "_Composite":
+        return _Composite(f"({self.name})/({other.name})", Unknown, Unknown)
+    
+    def __radd__(self, other) -> "_Composite":
+        return _Composite(f"{other.name}+{self.name}", Unknown, Unknown)
+    
+    def __rsub__(self, other) -> "_Composite":
+        return _Composite(f"{other.name}-{self.name}", Unknown, Unknown)
     
     def __rmul__(self, other) -> "_Composite":
-        return self.__new__(self.__class__, f"{other.name}*{self.name}", Unknown, Unknown)
+        return _Composite(f"{other.name}*{self.name}", Unknown, Unknown)
+    
+    def __rtruediv__(self, other) -> "_Composite":
+        return _Composite(f"({other.name})/({self.name})", Unknown, Unknown)
 
 class _Unit:
     __ALLOWED_NAMES = ['kg', 's', 'm']
@@ -55,11 +81,29 @@ class _Unit:
     def describe(self) -> str:
         return f"fullname: {self.description}, and measures: {self.measurement}"
     
+    def __add__(self, other) -> _Composite:
+        return _Composite(f"{self.name}+{other.name}", Unknown, Unknown)
+    
+    def __sub__(self, other) -> _Composite:
+        return _Composite(f"{self.name}-{other.name}", Unknown, Unknown)
+    
     def __mul__(self, other) -> _Composite:
         return _Composite(f"{self.name}*{other.name}", Unknown, Unknown)
     
+    def __truediv__(self, other) -> _Composite:
+        return _Composite(f"({self.name})/({other.name})", Unknown, Unknown)
+    
+    def __radd__(self, other) -> _Composite:
+        return _Composite(f"{other.name}+{self.name}", Unknown, Unknown)
+    
+    def __rsub__(self, other) -> _Composite:
+        return _Composite(f"{other.name}-{self.name}", Unknown, Unknown)
+    
     def __rmul__(self, other) -> _Composite:
         return _Composite(f"{other.name}*{self.name}", Unknown, Unknown)
+    
+    def __rtruediv__(self, other) -> _Composite:
+        return _Composite(f"({other.name})/({self.name})", Unknown, Unknown)
 
 class _Dimensional:
     __ALLOWED_NAMES = ['dim<power>']
@@ -87,10 +131,28 @@ class _Dimensional:
     def describe(self) -> str:
         return f"fullname: {self.description}, and measures: {self.measurement}"
     
+    def __add__(self, other) -> _Composite:
+        return _Composite(f"{self.name}+{other.name}", Unknown, Unknown)
+    
+    def __sub__(self, other) -> _Composite:
+        return _Composite(f"{self.name}-{other.name}", Unknown, Unknown)
+    
     def __mul__(self, other) -> _Composite:
         return _Composite(f"{self.name}*{other.name}", Unknown, Unknown)
     
+    def __truediv__(self, other) -> _Composite:
+        return _Composite(f"({self.name})/({other.name})", Unknown, Unknown)
+    
+    def __radd__(self, other) -> _Composite:
+        return _Composite(f"{other.name}+{self.name}", Unknown, Unknown)
+    
+    def __rsub__(self, other) -> _Composite:
+        return _Composite(f"{other.name}-{self.name}", Unknown, Unknown)
+    
     def __rmul__(self, other) -> _Composite:
         return _Composite(f"{other.name}*{self.name}", Unknown, Unknown)
+    
+    def __rtruediv__(self, other) -> _Composite:
+        return _Composite(f"({other.name})/({self.name})", Unknown, Unknown)
 
 _Measurable = Union[_Unit, _Composite, _Dimensional]

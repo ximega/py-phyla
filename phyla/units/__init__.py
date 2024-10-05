@@ -1,5 +1,5 @@
-from .classes import _Unit, _Composite, _Dimensional
-from typing import Self
+from .classes import _Unit, _Composite, _Dimensional, Unknown
+from typing import Any, Self
 
 
 
@@ -73,7 +73,7 @@ class Dim(Singleton, ModuleCollection):
     
 dim = Dim()
 
-class Cmp(Singleton, ModuleCollection):
+class Cmp(Singleton, ModuleCollection):    
     def __new__(cls, *args, **kwargs):
         return super().__new__(cls, *args, **kwargs)
       
@@ -81,4 +81,8 @@ class Cmp(Singleton, ModuleCollection):
         super().__init__()
         # define default units here
         
+    def __setattr__(self, name: str, value: _Composite) -> None:
+        super().__setattr__(name, value)
+            
+                        
 cmp = Cmp()

@@ -6,18 +6,37 @@ from phyla.methods import Method
 from phyla.storage import Variable
 
 def main() -> None:
-    dim.m2 = dim.squared(std.m)
-    
-    find_area = Method(
-        Variable('l', 'length of rectangle', std.m, int),
-        Variable('w', 'width of rectangle', std.m, int)
+    cmp.ms2 = std.m * dim.squared(std.s) # type: ignore
+    dim.m2 = dim.squared(std.m) # type: ignore
+    cmp.Pa = cmp.N / dim.m2 # type: ignore
+        
+    p = Method(
+        
+        Method(
+            Variable('m', 'mass', std.kg, float),
+            Variable('g', 'gravitational acceleration', cmp.ms2, float)
+        ).returns(
+            Variable('F', 'weight', cmp.N, float)
+        ).define_formula(
+            'm * g'
+        ).prompted(),
+        
+        Method(
+            Variable('l', 'length', std.m, float),
+            Variable('w', 'width', std.m, float)
+        ).returns(
+            Variable('A', 'Area', dim.m2, float)
+        ).define_formula(
+            'l * w'
+        ).prompted()
+        
     ).returns(
-        Variable('A', 'Area of rectangle', dim.m2, int)
+        Variable('p', 'pressure', cmp.Pa, float)
     ).define_formula(
-        'l * w'
-    )
-    
-    print(find_area.call(10, 20))
+        'F / A'
+    ).prompted().call()
+        
+    print(p)
 
 if __name__ == '__main__':
     main()
