@@ -7,9 +7,10 @@ from phyla.storage import Variable
 
 def main() -> None:
     cmp.ms2 = std.m * dim.squared(std.s) # type: ignore
+    cmp.create('N', std.kg * cmp.ms2) # type: ignore
     dim.m2 = dim.squared(std.m) # type: ignore
-    cmp.Pa = cmp.N / dim.m2 # type: ignore
-        
+    cmp.create('Pa', cmp.N / dim.m2) # type: ignore
+            
     p = Method(
         
         Method(

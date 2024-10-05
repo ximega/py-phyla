@@ -4,8 +4,11 @@ Unknown = 'Unknown'
 
 class _Composite:
     __instances: list[Self] = []
-    __slots__ = ['name', 'measurement', 'description', 'parts', 'corr_value']
-    __CORRESPONDING: dict[str, str] = {} 
+    __slots__ = ['__name', 'measurement', 'description', 'parts', 'corr_value']
+    __CORRESPONDING: dict[str, str] = {
+        'kg*m*s^2': 'N',
+        '(N)/(m^2)': 'Pa',
+    } 
     
     def __new__(cls, *args, **kwargs) -> Self:
         instance = super().__new__(cls)
@@ -13,18 +16,21 @@ class _Composite:
         return instance
     
     def __init__(self, name: str, measurement: str, description: str, *, corr_value: bool = False) -> None:
-        self.name = name
+        self.__name = name
         self.measurement = measurement
         self.description = description
         self.corr_value = corr_value
         
-    def __str__(self) -> str:
+    @property
+    def name(self) -> str:
         if self.corr_value:
-            print('Called')
             try:
-                return self.__CORRESPONDING[self.name]
+                return self.__CORRESPONDING[self.__name]
             except KeyError:
-                raise KeyError(f"Corresponding value not found for {self.name}")
+                raise KeyError(f"Corresponding value not found for {self.__name}")
+        return self.__name     
+        
+    def __str__(self) -> str:
         return self.name
         
     def __add__(self, other) -> "_Composite":

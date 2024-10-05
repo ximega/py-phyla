@@ -83,6 +83,14 @@ class Cmp(Singleton, ModuleCollection):
         
     def __setattr__(self, name: str, value: _Composite) -> None:
         super().__setattr__(name, value)
-            
+                
+    def create(self, name: str, composite: _Composite) -> None:
+        """
+        Will create an instance of _Composite with corr_value = True
+        """
+        
+        instance = _Composite(composite.name, composite.measurement, composite.description, corr_value=True)
+        
+        setattr(self, name, instance)
                         
 cmp = Cmp()
