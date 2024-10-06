@@ -1,12 +1,14 @@
 from .classes import _Unit, _Composite, _Dimensional, Unknown
 from typing import Any, Self
+from ..storage import _Constant
 
 
 
 __all__ = [
     'std',
     'dim',
-    'cmp'
+    'cmp',
+    'cnst'
 ]
 
 
@@ -45,7 +47,7 @@ class Dim(Singleton, ModuleCollection):
     def __new__(cls, *args, **kwargs) -> Self:
         return super().__new__(cls, *args, **kwargs)
     
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         super().__init__()
         # define default units here
         
@@ -77,7 +79,7 @@ class Cmp(Singleton, ModuleCollection):
     def __new__(cls, *args, **kwargs):
         return super().__new__(cls, *args, **kwargs)
       
-    def __init__(self) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__()
         # define default units here
         
@@ -94,3 +96,18 @@ class Cmp(Singleton, ModuleCollection):
         setattr(self, name, instance)
                         
 cmp = Cmp()
+
+class Cnst(Singleton, ModuleCollection):
+    __instances: list[Self] = []
+    
+    def __new__(cls, *args, **kwargs) -> Self:
+        instance = super().__new__(cls, *args, **kwargs)
+        cls.__instances.append(instance)
+        return instance
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        # define all constants here
+        self.g = _Constant('g', 'gravitational acceleration', 9.80665, std.m * dim.squared(std.s))
+        
+cnst = Cnst()

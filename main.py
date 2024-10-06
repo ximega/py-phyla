@@ -12,30 +12,14 @@ def main() -> None:
     cmp.create('Pa', cmp.N / dim.m2) # type: ignore
             
     p = Method(
-        
-        Method(
-            Variable('m', 'mass', std.kg, float),
-            Variable('g', 'gravitational acceleration', cmp.ms2, float)
-        ).returns(
-            Variable('F', 'weight', cmp.N, float)
-        ).define_formula(
-            'm * g'
-        ).prompted(),
-        
-        Method(
-            Variable('l', 'length', std.m, float),
-            Variable('w', 'width', std.m, float)
-        ).returns(
-            Variable('A', 'Area', dim.m2, float)
-        ).define_formula(
-            'l * w'
-        ).prompted()
-        
+        Variable('m', 'mass', std.kg, float),
+        cnst.g,
+        Variable('A', 'Area', dim.m2, float),
     ).returns(
         Variable('p', 'pressure', cmp.Pa, float)
     ).define_formula(
-        'F / A'
-    ).prompted().call()
+        '(m * g) / A'
+    ).call(10, 20)
         
     print(p)
 

@@ -1,10 +1,15 @@
 from typing import Self
-from .storage import Variable
+from .storage import Variable, _Constant
 from copy import deepcopy
 
 
+__all__ = [
+    'Method'
+]
+
+
 class Method:
-    def __init__(self, *params: Variable | Self) -> None:
+    def __init__(self, *params: Self | Variable | _Constant) -> None:
         if len(set(params)) < len(params):
             raise TypeError("You have specified the same variable two or more times")
         
@@ -70,6 +75,8 @@ class Method:
                         raise ValueError("value of variable called from a method is not defined and equals None")
                     
                     values[param.returned_param.name] = method_value
+                elif isinstance(param, _Constant):
+                    values[param.name] = param.value
               
             formula = deepcopy(self.formula)      
             for key, value in values.items():
@@ -84,13 +91,17 @@ class Method:
                 elif isinstance(param, Variable):
                     keys.append(param.name)
             
-            if len(param_values) > len(self.params):
+            params_without_constants = [param for param in self.params if not isinstance(param, _Constant)]
+            if len(param_values) > len(params_without_constants):
                 raise ValueError(f"Specified {set(param_values) - set(keys)} is not associated to any of method's parameter. Check parameters and types of them of method before putting values.") # type: ignore
-            if len(param_values) < len(self.params):
+            if len(param_values) < len(params_without_constants):
                 raise ValueError(f"Not specified value for one of parameters")
             
             formula = deepcopy(self.formula)    
             for index, value in enumerate(param_values):
                 formula = formula.replace(keys[index], str(value))
+                
+            for constant_param in [param for param in self.params if isinstance(param, _Constant)]:
+                formula = formula.replace(constant_param.name, str(constant_param.value))
                                     
             return Variable(self.returned_param.name, self.returned_param.description, self.returned_param.measured_in, self.returned_param.param_type, value = eval(formula))

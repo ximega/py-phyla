@@ -2,11 +2,17 @@ from typing import Self, Literal
 from .units.classes import _Unit, _Composite, _Dimensional, _Measurable
 
 
+__all__ = [
+    '_Constant',
+    'Variable'
+]
+
+
 class _Constant:
     __instances: list[Self] = []
     __slots__ = ['__name', '__description', '__value', '__measured_in']
     
-    def __new__(cls, name: str, description: str, value: int | float, measured_in: _Measurable) -> Self:
+    def __new__(cls, *args, **kwargs) -> Self:
         instance = super().__new__(cls)
         cls.__instances.append(instance)
         return instance
