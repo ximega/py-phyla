@@ -14,31 +14,25 @@ Unknown = 'Unknown'
 
 class _Composite:
     __instances: list[Self] = []
-    __slots__ = ['__name', 'measurement', 'description', 'parts', 'corr_value']
-    __CORRESPONDING: dict[str, str] = {
-        'kg*m*s^2': 'N',
-        '(N)/(m^2)': 'Pa',
-    } 
+    __slots__ = ['__name', 'measurement', 'description', 'parts']
     
     def __new__(cls, *args, **kwargs) -> Self:
         instance = super().__new__(cls)
         cls.__instances.append(instance)
         return instance
     
-    def __init__(self, name: str, measurement: str, description: str, *, corr_value: bool = False) -> None:
+    def __init__(self, name: str, measurement: str, description: str) -> None:
         self.__name = name
         self.measurement = measurement
         self.description = description
-        self.corr_value = corr_value
         
     @property
     def name(self) -> str:
-        if self.corr_value:
-            try:
-                return self.__CORRESPONDING[self.__name]
-            except KeyError:
-                raise KeyError(f"Corresponding value not found for {self.__name}")
-        return self.__name     
+        return self.__name
+    
+    def set_name(self, name: str) -> Self:
+        self.__name = name
+        return self
         
     def __str__(self) -> str:
         return self.name
@@ -68,7 +62,7 @@ class _Composite:
         return _Composite(f"({other.name})/({self.name})", Unknown, Unknown)
 
 class _Unit:
-    __ALLOWED_NAMES = ['kg', 's', 'm']
+    __ALLOWED_NAMES = ['kg', 's', 'm', 'A', 'cd', 'K', 'mol']
     __instances: list[Self] = []
     __slots__ = ['name', 'measurement', 'description']
     
@@ -119,7 +113,7 @@ class _Unit:
         return _Composite(f"{other.name}*{self.name}", Unknown, Unknown)
     
     def __rtruediv__(self, other) -> _Composite:
-        return _Composite(f"({other.name})/({self.name})", Unknown, Unknown)
+        return _Composite(f"({getattr(other, 'name', other)})/({self.name})", Unknown, Unknown)
 
 class _Dimensional:
     __ALLOWED_NAMES = ['dim<power>']

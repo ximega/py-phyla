@@ -44,7 +44,6 @@ class Collection(Singleton):
                         self.__values[param.name] = param.param_type(input(f"{param.name}: "))
                         continue
                     
-                    
     def all(self) -> dict[str, int | float | None]:
         return self.__values
     
