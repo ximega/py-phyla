@@ -8,7 +8,8 @@ __all__ = [
     'std',
     'dim',
     'cmp',
-    'cnst'
+    'cnst',
+    'Singleton'
 ]
 
 
@@ -99,6 +100,9 @@ cmp = Cmp()
 
 class Cnst(Singleton, ModuleCollection):
     __instances: list[Self] = []
+    __slots__ = [
+        'g',
+    ]
     
     def __new__(cls, *args, **kwargs) -> Self:
         instance = super().__new__(cls, *args, **kwargs)

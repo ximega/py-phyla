@@ -105,3 +105,4 @@ class Method:
                 formula = formula.replace(constant_param.name, str(constant_param.value))
                                     
             return Variable(self.returned_param.name, self.returned_param.description, self.returned_param.measured_in, self.returned_param.param_type, value = eval(formula))
+    
