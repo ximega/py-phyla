@@ -2,7 +2,8 @@ from copy import deepcopy
 from .units.classes import *
 from .storage import Variable, _Constant
 from .units import Singleton, cnst
-from typing import Any, Self
+from typing import Any, Literal, Self
+from math import sqrt
 
 
 __all__ = [
@@ -77,5 +78,5 @@ class CollectionMethod:
                 raise ValueError(f"value of key in Collection.values can't be equal None")
                 
             formula = formula.replace(key, str(val))
-        
-        return Variable(getattr(self, 'name', Unknown), getattr(self, 'description', Unknown), self.__measured_in, float, value = eval(formula))
+                
+        return Variable(getattr(self, 'name', Unknown), getattr(self, 'description', Unknown), self.__measured_in, float, value = eval(formula.strip()))

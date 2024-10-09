@@ -1,5 +1,4 @@
 from phyla.units import *
-from phyla.collection import Collection
 from phyla.methods import Method
 from phyla.storage import Variable
 
